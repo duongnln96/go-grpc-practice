@@ -1,8 +1,10 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
@@ -17,6 +19,8 @@ type LaptopStore interface {
 	Save(laptop *pcbook.Laptop) error
 	// Find finds a laptop by ID
 	Find(id string) (*pcbook.Laptop, error)
+	// Search searching laptop
+	Search(ctx context.Context, filter *pcbook.Filter, found func(laptop *pcbook.Laptop) error) error
 }
 
 // InMemoryLaptopStore stores laptop in memory
@@ -71,4 +75,72 @@ func (store *inMemoryLaptopStore) Find(id string) (*pcbook.Laptop, error) {
 	}
 
 	return deepCopy(laptop)
+}
+
+func (store *inMemoryLaptopStore) Search(ctx context.Context, filter *pcbook.Filter, found func(laptop *pcbook.Laptop) error) error {
+	store.mutex.RLock()
+	defer store.mutex.RUnlock()
+
+	for _, laptop := range store.data {
+		if ctx.Err() == context.Canceled || ctx.Err() == context.DeadlineExceeded {
+			log.Printf("context is cancelled \n")
+			return nil
+		}
+
+		if isQualified(filter, laptop) {
+			other, err := deepCopy(laptop)
+			if err != nil {
+				return err
+			}
+
+			err = found(other)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func isQualified(filter *pcbook.Filter, laptop *pcbook.Laptop) bool {
+	if laptop.GetPriceUsd() > filter.GetMaxPriceUsd() {
+		return false
+	}
+
+	if laptop.GetCpu().GetNumberCores() < filter.GetMinCpuCores() {
+		return false
+	}
+
+	if laptop.GetCpu().GetMinGhz() < filter.GetMinCpuGhz() {
+		return false
+	}
+
+	if toBit(laptop.GetRam()) < toBit(filter.GetMinRam()) {
+		return false
+	}
+
+	return true
+}
+
+func toBit(memory *pcbook.Memory) uint64 {
+	value := memory.GetValue()
+
+	switch memory.GetUnit() {
+	case pcbook.Memory_BIT:
+		return value
+	case pcbook.Memory_BYTE:
+		return value << 3 // 8 = 2^3
+	case pcbook.Memory_KILOBYTE:
+		return value << 13 // 1024 * 8 = 2^10 * 2^3 = 2^13
+	case pcbook.Memory_MEGABYTE:
+		return value << 23
+	case pcbook.Memory_GIGABYTE:
+		return value << 33
+	case pcbook.Memory_TERABYTE:
+		return value << 43
+	default:
+		return 0
+	}
 }
