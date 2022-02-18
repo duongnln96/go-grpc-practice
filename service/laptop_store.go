@@ -54,17 +54,6 @@ func (store *inMemoryLaptopStore) Save(laptop *pcbook.Laptop) error {
 	return nil
 }
 
-func deepCopy(laptop *pcbook.Laptop) (*pcbook.Laptop, error) {
-	other := &pcbook.Laptop{}
-
-	err := copier.Copy(other, laptop)
-	if err != nil {
-		return nil, fmt.Errorf("cannot copy laptop data: %w", err)
-	}
-
-	return other, nil
-}
-
 func (store *inMemoryLaptopStore) Find(id string) (*pcbook.Laptop, error) {
 	store.mutex.RLock()
 	defer store.mutex.RUnlock()
@@ -143,4 +132,15 @@ func toBit(memory *pcbook.Memory) uint64 {
 	default:
 		return 0
 	}
+}
+
+func deepCopy(laptop *pcbook.Laptop) (*pcbook.Laptop, error) {
+	other := &pcbook.Laptop{}
+
+	err := copier.Copy(other, laptop)
+	if err != nil {
+		return nil, fmt.Errorf("cannot copy laptop data: %w", err)
+	}
+
+	return other, nil
 }

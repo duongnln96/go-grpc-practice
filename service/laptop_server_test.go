@@ -27,34 +27,39 @@ func TestServerCreateLaptop(t *testing.T) {
 	require.Nil(t, err)
 
 	testCases := []struct {
-		name   string
-		laptop *pcbook.Laptop
-		store  service.LaptopStore
-		code   codes.Code
+		name       string
+		laptop     *pcbook.Laptop
+		store      service.LaptopStore
+		imageStore service.ImageStore
+		code       codes.Code
 	}{
 		{
-			name:   "success_with_id",
-			laptop: sample.NewLaptop(),
-			store:  service.NewInMemoryLaptopStore(),
-			code:   codes.OK,
+			name:       "success_with_id",
+			laptop:     sample.NewLaptop(),
+			store:      service.NewInMemoryLaptopStore(),
+			imageStore: service.NewDiskImageStore("image"),
+			code:       codes.OK,
 		},
 		{
-			name:   "success_no_id",
-			laptop: laptopNoID,
-			store:  service.NewInMemoryLaptopStore(),
-			code:   codes.OK,
+			name:       "success_no_id",
+			laptop:     laptopNoID,
+			store:      service.NewInMemoryLaptopStore(),
+			imageStore: service.NewDiskImageStore("image"),
+			code:       codes.OK,
 		},
 		{
-			name:   "failure_invalid_id",
-			laptop: laptopInvalidID,
-			store:  service.NewInMemoryLaptopStore(),
-			code:   codes.InvalidArgument,
+			name:       "failure_invalid_id",
+			laptop:     laptopInvalidID,
+			store:      service.NewInMemoryLaptopStore(),
+			imageStore: service.NewDiskImageStore("image"),
+			code:       codes.InvalidArgument,
 		},
 		{
-			name:   "failure_duplicate_id",
-			laptop: laptopDuplicateID,
-			store:  storeDuplicateID,
-			code:   codes.AlreadyExists,
+			name:       "failure_duplicate_id",
+			laptop:     laptopDuplicateID,
+			store:      storeDuplicateID,
+			imageStore: service.NewDiskImageStore("image"),
+			code:       codes.AlreadyExists,
 		},
 	}
 
@@ -66,7 +71,7 @@ func TestServerCreateLaptop(t *testing.T) {
 				Laptop: tc.laptop,
 			}
 
-			server := service.NewLaptopServer(tc.store)
+			server := service.NewLaptopServer(tc.store, tc.imageStore)
 			res, err := server.CreateLaptop(context.Background(), req)
 			if tc.code == codes.OK {
 				require.NoError(t, err)

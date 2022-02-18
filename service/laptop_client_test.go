@@ -17,7 +17,8 @@ func TestClientCreateLaptop(t *testing.T) {
 	t.Parallel()
 
 	laptopStore := service.NewInMemoryLaptopStore()
-	serverAddress := startTestLaptopServer(t, laptopStore)
+	imageStore := service.NewDiskImageStore("image")
+	serverAddress := startTestLaptopServer(t, laptopStore, imageStore)
 	client := newTestLaptopClient(t, serverAddress)
 
 	laptopReq := sample.NewLaptop()
@@ -37,8 +38,8 @@ func TestClientCreateLaptop(t *testing.T) {
 	requireSameLaptop(t, laptopReq, laptopInDb)
 }
 
-func startTestLaptopServer(t *testing.T, laptopStore service.LaptopStore) string {
-	laptopServer := service.NewLaptopServer(laptopStore)
+func startTestLaptopServer(t *testing.T, laptopStore service.LaptopStore, imageStore service.ImageStore) string {
+	laptopServer := service.NewLaptopServer(laptopStore, imageStore)
 
 	grpcServer := grpc.NewServer()
 	pcbook.RegisterLaptopServiceServer(grpcServer, laptopServer)

@@ -16,7 +16,8 @@ func Start(c *cli.Context) error {
 	log.Printf("start server on port %d", port)
 
 	laptopStore := service.NewInMemoryLaptopStore()
-	laptopServer := service.NewLaptopServer(laptopStore)
+	imageStore := service.NewDiskImageStore("images")
+	laptopServer := service.NewLaptopServer(laptopStore, imageStore)
 
 	grpcServer := grpc.NewServer()
 	pcbook.RegisterLaptopServiceServer(grpcServer, laptopServer)
