@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/google/uuid"
 )
 
@@ -16,14 +16,14 @@ func randomBool() bool {
 	return rand.Intn(2) == 1
 }
 
-func randomKeyBoardLayout() pcbook.Keyboard_Layout {
+func randomKeyBoardLayout() pb.Keyboard_Layout {
 	switch rand.Intn(3) {
 	case 1:
-		return pcbook.Keyboard_QWERTY
+		return pb.Keyboard_QWERTY
 	case 2:
-		return pcbook.Keyboard_QWERTZ
+		return pb.Keyboard_QWERTZ
 	default:
-		return pcbook.Keyboard_AZERTY
+		return pb.Keyboard_AZERTY
 	}
 }
 
@@ -92,22 +92,22 @@ func randomFloat32(min, max float32) float32 {
 	return min + rand.Float32()*(max-min)
 }
 
-func randomScreenResolution() *pcbook.Screen_Resolution {
+func randomScreenResolution() *pb.Screen_Resolution {
 	height := randomInt(1080, 4320)
 	width := height * 16 / 9
 
-	resolution := &pcbook.Screen_Resolution{
+	resolution := &pb.Screen_Resolution{
 		Width:  uint32(width),
 		Height: uint32(height),
 	}
 	return resolution
 }
 
-func randomScreenPanel() pcbook.Screen_Panel {
+func randomScreenPanel() pb.Screen_Panel {
 	if rand.Intn(2) == 1 {
-		return pcbook.Screen_IPS
+		return pb.Screen_IPS
 	}
-	return pcbook.Screen_OLED
+	return pb.Screen_OLED
 }
 
 func randomID() string {

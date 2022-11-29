@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/duongnln96/go-grpc-practice/sample"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/grpc"
@@ -15,10 +15,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func createLaptop(laptopClient pcbook.LaptopServiceClient) {
+func createLaptop(laptopClient pb.LaptopServiceClient) {
 	laptop := sample.NewLaptop()
 	laptop.Id = ""
-	req := &pcbook.CreateLaptopRequest{
+	req := &pb.CreateLaptopRequest{
 		Laptop: laptop,
 	}
 
@@ -41,13 +41,13 @@ func createLaptop(laptopClient pcbook.LaptopServiceClient) {
 	log.Printf("created laptop with id: %s", res.Id)
 }
 
-func searchLaptop(laptopClient pcbook.LaptopServiceClient, filter *pcbook.Filter) {
+func searchLaptop(laptopClient pb.LaptopServiceClient, filter *pb.Filter) {
 	log.Print("search filter: ", filter)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	req := &pcbook.SearchLaptopRequest{Filter: filter}
+	req := &pb.SearchLaptopRequest{Filter: filter}
 	stream, err := laptopClient.SearchLaptop(ctx, req)
 	if err != nil {
 		log.Fatal("cannot search laptop: ", err)
@@ -84,16 +84,16 @@ func Start(c *cli.Context) error {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	laptopClient := pcbook.NewLaptopServiceClient(conn)
+	laptopClient := pb.NewLaptopServiceClient(conn)
 	for i := 0; i < 10; i++ {
 		createLaptop(laptopClient)
 	}
 
-	filter := &pcbook.Filter{
+	filter := &pb.Filter{
 		MaxPriceUsd: 3000,
 		MinCpuCores: 4,
 		MinCpuGhz:   2.5,
-		MinRam:      &pcbook.Memory{Value: 8, Unit: pcbook.Memory_GIGABYTE},
+		MinRam:      &pb.Memory{Value: 8, Unit: pb.Memory_GIGABYTE},
 	}
 
 	searchLaptop(laptopClient, filter)

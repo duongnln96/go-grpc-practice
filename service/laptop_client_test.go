@@ -5,7 +5,7 @@ import (
 	"net"
 	"testing"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/duongnln96/go-grpc-practice/sample"
 	"github.com/duongnln96/go-grpc-practice/serializer"
 	"github.com/duongnln96/go-grpc-practice/service"
@@ -23,7 +23,7 @@ func TestClientCreateLaptop(t *testing.T) {
 
 	laptopReq := sample.NewLaptop()
 	expectedID := laptopReq.Id
-	req := &pcbook.CreateLaptopRequest{
+	req := &pb.CreateLaptopRequest{
 		Laptop: laptopReq,
 	}
 
@@ -42,7 +42,7 @@ func startTestLaptopServer(t *testing.T, laptopStore service.LaptopStore, imageS
 	laptopServer := service.NewLaptopServer(laptopStore, imageStore)
 
 	grpcServer := grpc.NewServer()
-	pcbook.RegisterLaptopServiceServer(grpcServer, laptopServer)
+	pb.RegisterLaptopServiceServer(grpcServer, laptopServer)
 
 	listener, err := net.Listen("tcp", ":0") // random available port
 	require.NoError(t, err)
@@ -52,14 +52,14 @@ func startTestLaptopServer(t *testing.T, laptopStore service.LaptopStore, imageS
 	return listener.Addr().String()
 }
 
-func newTestLaptopClient(t *testing.T, serverAddress string) pcbook.LaptopServiceClient {
+func newTestLaptopClient(t *testing.T, serverAddress string) pb.LaptopServiceClient {
 	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
 	require.NoError(t, err)
 
-	return pcbook.NewLaptopServiceClient(conn)
+	return pb.NewLaptopServiceClient(conn)
 }
 
-func requireSameLaptop(t *testing.T, laptop1 *pcbook.Laptop, laptop2 *pcbook.Laptop) {
+func requireSameLaptop(t *testing.T, laptop1 *pb.Laptop, laptop2 *pb.Laptop) {
 	json1, err := serializer.ProtobufToJSON(laptop1)
 	require.NoError(t, err)
 

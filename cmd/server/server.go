@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/duongnln96/go-grpc-practice/service"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/grpc"
@@ -20,7 +20,7 @@ func Start(c *cli.Context) error {
 	laptopServer := service.NewLaptopServer(laptopStore, imageStore)
 
 	grpcServer := grpc.NewServer()
-	pcbook.RegisterLaptopServiceServer(grpcServer, laptopServer)
+	pb.RegisterLaptopServiceServer(grpcServer, laptopServer)
 
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 	listener, err := net.Listen("tcp", address)

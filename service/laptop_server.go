@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -17,20 +17,22 @@ const maxImageSize = 1 << 20
 
 // LaptopServer is the server that provides laptop services
 type LaptopServer struct {
-	laptopStore LaptopStore
-	imageStore  ImageStore
+	LaptopStore LaptopStore
+	ImageStore  ImageStore
+
+	pb.UnimplementedLaptopServiceServer
 }
 
 // NewLaptopServer returns a new LaptopServer
-func NewLaptopServer(laptopStore LaptopStore, imageStore ImageStore) pcbook.LaptopServiceServer {
+func NewLaptopServer(laptopStore LaptopStore, imageStore ImageStore) pb.LaptopServiceServer {
 	return &LaptopServer{
-		laptopStore: laptopStore,
-		imageStore:  imageStore,
+		LaptopStore: laptopStore,
+		ImageStore:  imageStore,
 	}
 }
 
 // CreateLaptop is a unary RPC to create a new laptop
-func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pcbook.CreateLaptopRequest) (*pcbook.CreateLaptopResponse, error) {
+func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLaptopRequest) (*pb.CreateLaptopResponse, error) {
 	laptop := req.GetLaptop()
 	log.Printf("receive a create-laptop request with id: %s", laptop.Id)
 
@@ -58,7 +60,7 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pcbook.Create
 		return nil, status.Error(codes.DeadlineExceeded, "deadline is exceeded")
 	}
 
-	err := server.laptopStore.Save(laptop)
+	err := server.LaptopStore.Save(laptop)
 	if err != nil {
 		code := codes.Internal
 		if errors.Is(err, ErrAlreadyExists) {
@@ -70,22 +72,22 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pcbook.Create
 
 	log.Printf("saved laptop with id: %s", laptop.Id)
 
-	res := &pcbook.CreateLaptopResponse{
+	res := &pb.CreateLaptopResponse{
 		Id: laptop.Id,
 	}
 
 	return res, nil
 }
 
-func (server *LaptopServer) SearchLaptop(req *pcbook.SearchLaptopRequest, stream pcbook.LaptopService_SearchLaptopServer) error {
+func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.LaptopService_SearchLaptopServer) error {
 	filter := req.GetFilter()
 	log.Printf("receive a search-laptop request with filter: %v", filter)
 
-	err := server.laptopStore.Search(
+	err := server.LaptopStore.Search(
 		stream.Context(),
 		filter,
-		func(laptop *pcbook.Laptop) error {
-			res := &pcbook.SearchLaptopResponse{
+		func(laptop *pb.Laptop) error {
+			res := &pb.SearchLaptopResponse{
 				Laptop: laptop,
 			}
 			err := stream.Send(res)
@@ -105,7 +107,7 @@ func (server *LaptopServer) SearchLaptop(req *pcbook.SearchLaptopRequest, stream
 	return nil
 }
 
-func (server *LaptopServer) UploadImage(stream pcbook.LaptopService_UploadImageServer) error {
+func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		return logError(status.Errorf(codes.Unknown, "cannot receive image info"))
@@ -115,7 +117,7 @@ func (server *LaptopServer) UploadImage(stream pcbook.LaptopService_UploadImageS
 	imageType := req.GetInfo().GetImageType()
 	log.Printf("receive an upload-image request for laptop %s with image type %s", laptopID, imageType)
 
-	laptop, err := server.laptopStore.Find(laptopID)
+	laptop, err := server.LaptopStore.Find(laptopID)
 	if err != nil {
 		return logError(status.Errorf(codes.Internal, "cannot find laptop: %v", err))
 	}
@@ -154,12 +156,12 @@ func (server *LaptopServer) UploadImage(stream pcbook.LaptopService_UploadImageS
 		}
 	}
 
-	imageID, err := server.imageStore.Save(laptopID, imageType, imageData)
+	imageID, err := server.ImageStore.Save(laptopID, imageType, imageData)
 	if err != nil {
 		return logError(status.Errorf(codes.Internal, "cannot save image to the store: %v", err))
 	}
 
-	res := &pcbook.UploadImageResponse{
+	res := &pb.UploadImageResponse{
 		Id:   imageID,
 		Size: uint32(imageSize),
 	}

@@ -7,7 +7,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/jinzhu/copier"
 )
 
@@ -16,28 +16,28 @@ var ErrAlreadyExists = errors.New("record already exists")
 // LaptopStore is an interface to store laptop
 type LaptopStore interface {
 	// Save saves the laptop to the store
-	Save(laptop *pcbook.Laptop) error
+	Save(laptop *pb.Laptop) error
 	// Find finds a laptop by ID
-	Find(id string) (*pcbook.Laptop, error)
+	Find(id string) (*pb.Laptop, error)
 	// Search searching laptop
-	Search(ctx context.Context, filter *pcbook.Filter, found func(laptop *pcbook.Laptop) error) error
+	Search(ctx context.Context, filter *pb.Filter, found func(laptop *pb.Laptop) error) error
 }
 
 // InMemoryLaptopStore stores laptop in memory
 type inMemoryLaptopStore struct {
 	mutex sync.RWMutex
-	data  map[string]*pcbook.Laptop
+	data  map[string]*pb.Laptop
 }
 
 // NewInMemoryLaptopStore returns a new InMemoryLaptopStore
 func NewInMemoryLaptopStore() LaptopStore {
 	return &inMemoryLaptopStore{
-		data: make(map[string]*pcbook.Laptop),
+		data: make(map[string]*pb.Laptop),
 	}
 }
 
 // Save saves the laptop to the store
-func (store *inMemoryLaptopStore) Save(laptop *pcbook.Laptop) error {
+func (store *inMemoryLaptopStore) Save(laptop *pb.Laptop) error {
 	store.mutex.Lock()
 	defer store.mutex.Unlock()
 
@@ -54,7 +54,7 @@ func (store *inMemoryLaptopStore) Save(laptop *pcbook.Laptop) error {
 	return nil
 }
 
-func (store *inMemoryLaptopStore) Find(id string) (*pcbook.Laptop, error) {
+func (store *inMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 	store.mutex.RLock()
 	defer store.mutex.RUnlock()
 
@@ -66,7 +66,7 @@ func (store *inMemoryLaptopStore) Find(id string) (*pcbook.Laptop, error) {
 	return deepCopy(laptop)
 }
 
-func (store *inMemoryLaptopStore) Search(ctx context.Context, filter *pcbook.Filter, found func(laptop *pcbook.Laptop) error) error {
+func (store *inMemoryLaptopStore) Search(ctx context.Context, filter *pb.Filter, found func(laptop *pb.Laptop) error) error {
 	store.mutex.RLock()
 	defer store.mutex.RUnlock()
 
@@ -93,7 +93,7 @@ func (store *inMemoryLaptopStore) Search(ctx context.Context, filter *pcbook.Fil
 	return nil
 }
 
-func isQualified(filter *pcbook.Filter, laptop *pcbook.Laptop) bool {
+func isQualified(filter *pb.Filter, laptop *pb.Laptop) bool {
 	if laptop.GetPriceUsd() > filter.GetMaxPriceUsd() {
 		return false
 	}
@@ -113,29 +113,29 @@ func isQualified(filter *pcbook.Filter, laptop *pcbook.Laptop) bool {
 	return true
 }
 
-func toBit(memory *pcbook.Memory) uint64 {
+func toBit(memory *pb.Memory) uint64 {
 	value := memory.GetValue()
 
 	switch memory.GetUnit() {
-	case pcbook.Memory_BIT:
+	case pb.Memory_BIT:
 		return value
-	case pcbook.Memory_BYTE:
+	case pb.Memory_BYTE:
 		return value << 3 // 8 = 2^3
-	case pcbook.Memory_KILOBYTE:
+	case pb.Memory_KILOBYTE:
 		return value << 13 // 1024 * 8 = 2^10 * 2^3 = 2^13
-	case pcbook.Memory_MEGABYTE:
+	case pb.Memory_MEGABYTE:
 		return value << 23
-	case pcbook.Memory_GIGABYTE:
+	case pb.Memory_GIGABYTE:
 		return value << 33
-	case pcbook.Memory_TERABYTE:
+	case pb.Memory_TERABYTE:
 		return value << 43
 	default:
 		return 0
 	}
 }
 
-func deepCopy(laptop *pcbook.Laptop) (*pcbook.Laptop, error) {
-	other := &pcbook.Laptop{}
+func deepCopy(laptop *pb.Laptop) (*pb.Laptop, error) {
+	other := &pb.Laptop{}
 
 	err := copier.Copy(other, laptop)
 	if err != nil {

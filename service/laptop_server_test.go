@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/duongnln96/go-grpc-practice/pb/pcbook"
+	"github.com/duongnln96/go-grpc-practice/pb"
 	"github.com/duongnln96/go-grpc-practice/sample"
 	"github.com/duongnln96/go-grpc-practice/service"
 	"github.com/stretchr/testify/require"
@@ -28,7 +28,7 @@ func TestServerCreateLaptop(t *testing.T) {
 
 	testCases := []struct {
 		name       string
-		laptop     *pcbook.Laptop
+		laptop     *pb.Laptop
 		store      service.LaptopStore
 		imageStore service.ImageStore
 		code       codes.Code
@@ -67,7 +67,7 @@ func TestServerCreateLaptop(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			req := &pcbook.CreateLaptopRequest{
+			req := &pb.CreateLaptopRequest{
 				Laptop: tc.laptop,
 			}
 

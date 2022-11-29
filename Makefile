@@ -1,7 +1,8 @@
 gen:
-	protoc --proto_path=proto proto/*.proto --go_out=plugins=grpc:pb
-run:
-	go run main.go
+	protoc --proto_path=proto proto/*.proto --go_out=pb --go_opt=paths=source_relative \
+		--go-grpc_out=pb --go-grpc_opt=paths=source_relative
+build:
+	go build -o app
 clean:
 	rm -rf pb/*
 server:
