@@ -21,7 +21,7 @@ func Start(c *cli.Context) error {
 	log.Printf("[STARTING] gRPC Server on port %d", port)
 
 	laptopRepoInstance := laptopRepo.NewInMemoryLaptopStore()
-	imageRepoInstance := imageRepo.NewDiskImageStore("./tmp/images")
+	imageRepoInstance := imageRepo.NewDiskImageStore("./tmp/")
 
 	laptopServer := laptopSvc.NewLaptopServer(laptopSvc.ServiceDeps{
 		LaptopRepoInstance: laptopRepoInstance,

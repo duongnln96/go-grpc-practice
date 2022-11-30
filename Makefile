@@ -31,3 +31,9 @@ test:
 	@echo "====== Start testing ======"
 	@go test -cover -race ./...
 	@echo "====== Completed ======"
+
+.PHONY: tmp
+tmp:
+	@echo "====== Cleaning tmp folder ======"
+	@rm -rf tmp/*
+	@echo "====== Completed ======"
