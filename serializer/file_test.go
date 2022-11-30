@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/duongnln96/go-grpc-practice/pb"
-	"github.com/duongnln96/go-grpc-practice/sample"
+	generator "github.com/duongnln96/go-grpc-practice/sample/generator"
 	"github.com/duongnln96/go-grpc-practice/serializer"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
@@ -16,7 +16,7 @@ func TestFileSerializer(t *testing.T) {
 	binaryFile := "../tmp/laptop.bin"
 	jsonFile := "../tmp/laptop.json"
 
-	laptop1 := sample.NewLaptop()
+	laptop1 := generator.NewLaptop()
 
 	err := serializer.WriteProtobufToBinaryFile(laptop1, binaryFile)
 	require.NoError(t, err)

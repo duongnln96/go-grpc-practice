@@ -82,7 +82,7 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,go
 
 # User define
-tmp/*
-!tmp/.gitkeep
+tmp/*.*
+tmp/images/*.
 app
 go-grpc-practice
