@@ -106,7 +106,7 @@ func uploadImage(laptopClient pb.LaptopServiceClient, laptopID string, imagePath
 
 	// send image by chunk
 	reader := bufio.NewReader(file)
-	buffer := make([]byte, 1024)
+	buffer := make([]byte, 1024*2)
 
 	for {
 		n, err := reader.Read(buffer)
@@ -148,12 +148,12 @@ func Start(c *cli.Context) error {
 	serverPort := c.String("port")
 
 	serverInfo := fmt.Sprintf("%s:%s", serverAddress, serverPort)
-	log.Printf("dialing to gRPC server %s", serverInfo)
+	log.Printf("Dialing gRPC server %s", serverInfo)
 
 	// create connection to server
 	clientConn, err := grpc.Dial(serverInfo, grpc.WithInsecure())
 	if err != nil {
-		log.Fatal("cannot dial server: ", err)
+		log.Fatal("[FAIL] Cannot dial server: ", err)
 	}
 
 	// laptop client instance

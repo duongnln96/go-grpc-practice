@@ -83,6 +83,6 @@ Temporary Items
 
 # User define
 tmp/*.*
-tmp/images/*.
+tmp/images/*
 app
 go-grpc-practice
