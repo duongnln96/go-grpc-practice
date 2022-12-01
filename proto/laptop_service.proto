@@ -23,14 +23,14 @@ message SearchLaptopResponse {
     Laptop laptop = 1;
 }
 
-message ImgaeInfo {
+message ImageInfo {
     string laptop_id = 1;
     string image_type = 2;
 }
 
 message UploadImageRequest {
     oneof data {
-        ImgaeInfo info = 1;
+        ImageInfo info = 1;
         bytes chunk_data = 2;
     }
 }

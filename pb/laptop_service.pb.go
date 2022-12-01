@@ -208,7 +208,7 @@ func (x *SearchLaptopResponse) GetLaptop() *Laptop {
 	return nil
 }
 
-type ImgaeInfo struct {
+type ImageInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -217,8 +217,8 @@ type ImgaeInfo struct {
 	ImageType string `protobuf:"bytes,2,opt,name=image_type,json=imageType,proto3" json:"image_type,omitempty"`
 }
 
-func (x *ImgaeInfo) Reset() {
-	*x = ImgaeInfo{}
+func (x *ImageInfo) Reset() {
+	*x = ImageInfo{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_laptop_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -226,13 +226,13 @@ func (x *ImgaeInfo) Reset() {
 	}
 }
 
-func (x *ImgaeInfo) String() string {
+func (x *ImageInfo) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ImgaeInfo) ProtoMessage() {}
+func (*ImageInfo) ProtoMessage() {}
 
-func (x *ImgaeInfo) ProtoReflect() protoreflect.Message {
+func (x *ImageInfo) ProtoReflect() protoreflect.Message {
 	mi := &file_laptop_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -244,19 +244,19 @@ func (x *ImgaeInfo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ImgaeInfo.ProtoReflect.Descriptor instead.
-func (*ImgaeInfo) Descriptor() ([]byte, []int) {
+// Deprecated: Use ImageInfo.ProtoReflect.Descriptor instead.
+func (*ImageInfo) Descriptor() ([]byte, []int) {
 	return file_laptop_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ImgaeInfo) GetLaptopId() string {
+func (x *ImageInfo) GetLaptopId() string {
 	if x != nil {
 		return x.LaptopId
 	}
 	return ""
 }
 
-func (x *ImgaeInfo) GetImageType() string {
+func (x *ImageInfo) GetImageType() string {
 	if x != nil {
 		return x.ImageType
 	}
@@ -313,7 +313,7 @@ func (m *UploadImageRequest) GetData() isUploadImageRequest_Data {
 	return nil
 }
 
-func (x *UploadImageRequest) GetInfo() *ImgaeInfo {
+func (x *UploadImageRequest) GetInfo() *ImageInfo {
 	if x, ok := x.GetData().(*UploadImageRequest_Info); ok {
 		return x.Info
 	}
@@ -332,7 +332,7 @@ type isUploadImageRequest_Data interface {
 }
 
 type UploadImageRequest_Info struct {
-	Info *ImgaeInfo `protobuf:"bytes,1,opt,name=info,proto3,oneof"`
+	Info *ImageInfo `protobuf:"bytes,1,opt,name=info,proto3,oneof"`
 }
 
 type UploadImageRequest_ChunkData struct {
@@ -422,7 +422,7 @@ var file_laptop_service_proto_rawDesc = []byte{
 	0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x06, 0x6c, 0x61, 0x70, 0x74, 0x6f, 0x70, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x64, 0x75, 0x6f, 0x6e, 0x67, 0x6e, 0x6c, 0x6e, 0x2e, 0x70,
 	0x63, 0x62, 0x6f, 0x6f, 0x6b, 0x2e, 0x4c, 0x61, 0x70, 0x74, 0x6f, 0x70, 0x52, 0x06, 0x6c, 0x61,
-	0x70, 0x74, 0x6f, 0x70, 0x22, 0x47, 0x0a, 0x09, 0x49, 0x6d, 0x67, 0x61, 0x65, 0x49, 0x6e, 0x66,
+	0x70, 0x74, 0x6f, 0x70, 0x22, 0x47, 0x0a, 0x09, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x6e, 0x66,
 	0x6f, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x61, 0x70, 0x74, 0x6f, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x61, 0x70, 0x74, 0x6f, 0x70, 0x49, 0x64, 0x12, 0x1d,
 	0x0a, 0x0a, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01,
@@ -430,7 +430,7 @@ var file_laptop_service_proto_rawDesc = []byte{
 	0x12, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x1a, 0x2e, 0x64, 0x75, 0x6f, 0x6e, 0x67, 0x6e, 0x6c, 0x6e, 0x2e, 0x70, 0x63, 0x62,
-	0x6f, 0x6f, 0x6b, 0x2e, 0x49, 0x6d, 0x67, 0x61, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x48, 0x00, 0x52,
+	0x6f, 0x6f, 0x6b, 0x2e, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x48, 0x00, 0x52,
 	0x04, 0x69, 0x6e, 0x66, 0x6f, 0x12, 0x1f, 0x0a, 0x0a, 0x63, 0x68, 0x75, 0x6e, 0x6b, 0x5f, 0x64,
 	0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x48, 0x00, 0x52, 0x09, 0x63, 0x68, 0x75,
 	0x6e, 0x6b, 0x44, 0x61, 0x74, 0x61, 0x42, 0x06, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x39,
@@ -478,7 +478,7 @@ var file_laptop_service_proto_goTypes = []interface{}{
 	(*CreateLaptopResponse)(nil), // 1: duongnln.pcbook.CreateLaptopResponse
 	(*SearchLaptopRequest)(nil),  // 2: duongnln.pcbook.SearchLaptopRequest
 	(*SearchLaptopResponse)(nil), // 3: duongnln.pcbook.SearchLaptopResponse
-	(*ImgaeInfo)(nil),            // 4: duongnln.pcbook.ImgaeInfo
+	(*ImageInfo)(nil),            // 4: duongnln.pcbook.ImageInfo
 	(*UploadImageRequest)(nil),   // 5: duongnln.pcbook.UploadImageRequest
 	(*UploadImageResponse)(nil),  // 6: duongnln.pcbook.UploadImageResponse
 	(*Laptop)(nil),               // 7: duongnln.pcbook.Laptop
@@ -488,7 +488,7 @@ var file_laptop_service_proto_depIdxs = []int32{
 	7, // 0: duongnln.pcbook.CreateLaptopRequest.laptop:type_name -> duongnln.pcbook.Laptop
 	8, // 1: duongnln.pcbook.SearchLaptopRequest.filter:type_name -> duongnln.pcbook.Filter
 	7, // 2: duongnln.pcbook.SearchLaptopResponse.laptop:type_name -> duongnln.pcbook.Laptop
-	4, // 3: duongnln.pcbook.UploadImageRequest.info:type_name -> duongnln.pcbook.ImgaeInfo
+	4, // 3: duongnln.pcbook.UploadImageRequest.info:type_name -> duongnln.pcbook.ImageInfo
 	0, // 4: duongnln.pcbook.LaptopService.CreateLaptop:input_type -> duongnln.pcbook.CreateLaptopRequest
 	2, // 5: duongnln.pcbook.LaptopService.SearchLaptop:input_type -> duongnln.pcbook.SearchLaptopRequest
 	5, // 6: duongnln.pcbook.LaptopService.UploadImage:input_type -> duongnln.pcbook.UploadImageRequest
@@ -559,7 +559,7 @@ func file_laptop_service_proto_init() {
 			}
 		}
 		file_laptop_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ImgaeInfo); i {
+			switch v := v.(*ImageInfo); i {
 			case 0:
 				return &v.state
 			case 1:

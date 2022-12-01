@@ -1,4 +1,4 @@
-package service_test
+package grpc_server_test
 
 // func TestClientCreateLaptop(t *testing.T) {
 // 	t.Parallel()

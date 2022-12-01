@@ -6,8 +6,6 @@ import (
 	latopRepo "github.com/duongnln96/go-grpc-practice/repo/memory/laptop"
 )
 
-
-
 type ServiceDeps struct {
 	LaptopRepoInstance latopRepo.LaptopStore
 	ImageRepoInstance  imageRepo.ImageStore
@@ -21,7 +19,7 @@ type service struct {
 }
 
 // NewLaptopServer returns a new LaptopServer
-func NewLaptopServer(deps ServiceDeps) pb.LaptopServiceServer {
+func NewService(deps ServiceDeps) pb.LaptopServiceServer {
 	return &service{
 		laptopRepo: deps.LaptopRepoInstance,
 		imageRepo:  deps.ImageRepoInstance,

@@ -27,7 +27,9 @@ Practicing gPRC with Go
 3. Run to generate codes
 
     ```sh
-    protoc --proto_path=proto proto/*.proto --go_out=plugins=grpc:pb
+    protoc --proto_path=proto proto/*.proto --go_out=pb --go_opt=paths=source_relative \
+    --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+    --fatal_warnings
     ```
 
 4. Create ```Makefile```
@@ -121,3 +123,11 @@ package techschool.pcbook;
 // rename package to "pb"
 option go_package = "pb";
 ```
+
+## gRPC interceptor
+
+It's like a middleware function that can be added both server-side and client-side
+
+- Server-side interceptor is a function that will be called by the gRPC server before reaching the actual RPC method. It can be used for multiple purposes such as logging, tracing, rate-limiting, authentication and authorization.
+
+- Similarly, client-side interceptor is a function that will be called by the gRPC client before invoking the actual RPC

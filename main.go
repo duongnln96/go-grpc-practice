@@ -13,9 +13,9 @@ func main() {
 	app := cli.NewApp()
 	app.Commands = []*cli.Command{
 		{
-			Name:    "server",
-			Usage:   "start server",
-			Aliases: []string{"s"},
+			Name:    "grpc_server",
+			Usage:   "start grpc server",
+			Aliases: []string{"gs"},
 			Flags: []cli.Flag{
 				&cli.IntFlag{
 					Name:    "port",
@@ -29,9 +29,9 @@ func main() {
 			},
 		},
 		{
-			Name:    "client",
-			Usage:   "start client",
-			Aliases: []string{"c"},
+			Name:    "grpc_client",
+			Usage:   "start grpc client",
+			Aliases: []string{"gc"},
 			Flags: []cli.Flag{
 				&cli.StringFlag{
 					Name:    "address",
@@ -48,6 +48,14 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				return client.Start(c)
+			},
+		},
+		{
+			Name:    "http_server",
+			Usage:   "start http server",
+			Aliases: []string{"s"},
+			Action: func(c *cli.Context) error {
+				return nil
 			},
 		},
 	}

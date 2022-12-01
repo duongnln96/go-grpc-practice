@@ -18,13 +18,17 @@ clean:
 	@rm -rf pb/*
 	@echo "====== Completed ======"
 
-.PHONY: server
-server:
-	@go run main.go server --port 8080
+.PHONY: http_server
+http_server:
+	@go run main.go http_server
 
-.PHONY: client
-client:
-	@go run main.go client --address 0.0.0.0
+.PHONY: grpc_server
+grpc_server:
+	@go run main.go grpc_server --port 8080
+
+.PHONY: grpc_client
+grpc_client:
+	@go run main.go grpc_client --address 0.0.0.0
 
 .PHONY: test
 test:
