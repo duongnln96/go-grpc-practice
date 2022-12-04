@@ -14,20 +14,17 @@ build:
 
 .PHONY: clean
 clean:
-	@echo "====== Cleaning pb folder ======"
+	@echo "====== Cleaning ======"
 	@rm -rf pb/*
+	@rm -rf swagger/*
 	@echo "====== Completed ======"
 
-.PHONY: http_server
-http_server:
-	@go run main.go http_server
-
-.PHONY: grpc_server
-grpc_server:
+.PHONY: server
+server:
 	@go run main.go grpc_server --port 8080
 
-.PHONY: grpc_client
-grpc_client:
+.PHONY: client
+client:
 	@go run main.go grpc_client --address 0.0.0.0
 
 .PHONY: test
@@ -40,4 +37,10 @@ test:
 tmp:
 	@echo "====== Cleaning tmp folder ======"
 	@rm -rf tmp/*
+	@echo "====== Completed ======"
+
+.PHONY: cert
+cert:
+	@echo "====== Generating ======"
+	cd cert; ./gen.sh; cd ..
 	@echo "====== Completed ======"
