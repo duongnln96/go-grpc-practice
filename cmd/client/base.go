@@ -5,37 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/duongnln96/go-grpc-practice/pb"
-	sample "github.com/duongnln96/go-grpc-practice/sample/generator"
-
 	"github.com/urfave/cli/v2"
 	"google.golang.org/grpc"
 )
-
-func testCreateLaptop(laptopClient *LaptopClient) {
-	laptopClient.CreateLaptop(sample.NewLaptop())
-}
-
-func testSearchLaptop(laptopClient *LaptopClient) {
-	for i := 0; i < 10; i++ {
-		laptopClient.CreateLaptop(sample.NewLaptop())
-	}
-
-	filter := &pb.Filter{
-		MaxPriceUsd: 3000,
-		MinCpuCores: 4,
-		MinCpuGhz:   2.5,
-		MinRam:      &pb.Memory{Value: 8, Unit: pb.Memory_GIGABYTE},
-	}
-
-	laptopClient.SearchLaptop(filter)
-}
-
-func testUploadImage(laptopClient *LaptopClient) {
-	laptop := sample.NewLaptop()
-	laptopClient.CreateLaptop(laptop)
-	laptopClient.UploadImage(laptop.GetId(), "./sample/images/9080679.jpeg")
-}
 
 const (
 	username        = "admin1"
@@ -47,9 +19,9 @@ func authMethods() map[string]bool {
 	const laptopServicePath = "/duongnln.pcbook.LaptopService/"
 
 	return map[string]bool{
-		laptopServicePath + "CreateLaptop": true,
-		laptopServicePath + "UploadImage":  true,
-		laptopServicePath + "RateLaptop":   true,
+		fmt.Sprintf("%s%s", laptopServicePath, "CreateLaptop"): true,
+		fmt.Sprintf("%s%s", laptopServicePath, "UploadImage"):  true,
+		fmt.Sprintf("%s%s", laptopServicePath, "RateLaptop"):   true,
 	}
 }
 
@@ -85,7 +57,7 @@ func Start(c *cli.Context) error {
 
 	laptopClient := NewLaptopClient(cc2)
 
-	testCreateLaptop(laptopClient)
+	testRatingLaptop(laptopClient)
 
 	return nil
 }

@@ -131,3 +131,11 @@ It's like a middleware function that can be added both server-side and client-si
 - Server-side interceptor is a function that will be called by the gRPC server before reaching the actual RPC method. It can be used for multiple purposes such as logging, tracing, rate-limiting, authentication and authorization.
 
 - Similarly, client-side interceptor is a function that will be called by the gRPC client before invoking the actual RPC
+
+## TLS/SSL
+
+There are 3 types of gRPC connection:
+
+- Insecure: Plaintext data, no encyption.
+- Server-side TLS: Encrypted data, only server needs to provide its certificate to client. `(Usually use)`
+- Mutual TLS: Encrypted data, both server and client need to provide its certificate to each other.

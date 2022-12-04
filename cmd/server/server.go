@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/duongnln96/go-grpc-practice/pb"
 
 	imageRepo "github.com/duongnln96/go-grpc-practice/repo/memory/image"
 	laptopRepo "github.com/duongnln96/go-grpc-practice/repo/memory/laptop"
+	ratingRepo "github.com/duongnln96/go-grpc-practice/repo/memory/rating"
 	userRepo "github.com/duongnln96/go-grpc-practice/repo/memory/user"
 
 	authSvc "github.com/duongnln96/go-grpc-practice/service/grpc_server/handler/auth"
@@ -41,21 +46,26 @@ func Start(c *cli.Context) error {
 	port := c.Int("port")
 	log.Printf("[STARTING] gRPC Server on port %d", port)
 
+	// init repo
 	laptopRepoInstance := laptopRepo.NewInMemoryLaptopStore()
+
+	ratingRepoInstance := ratingRepo.NewInMemoryRatingStore()
 
 	imageRepoInstance := imageRepo.NewDiskImageStore("./tmp/")
 
 	userRepoInstance := userRepo.NewInMemoryUserStore()
 	err := userRepoInstance.SeedUser()
 	if err != nil {
-		log.Fatal("cannot seed users: ", err)
+		log.Fatal("[FAIL] Cannot seed users: ", err)
 	}
 
+	// init services
 	jwtService := jwtSvc.NewJWTManager(secretKey, tokenDuration)
 
 	laptopService := laptopSvc.NewService(laptopSvc.ServiceDeps{
 		LaptopRepoInstance: laptopRepoInstance,
 		ImageRepoInstance:  imageRepoInstance,
+		RatingRepoInstance: ratingRepoInstance,
 	})
 
 	authService := authSvc.NewService(authSvc.ServiceDeps{
@@ -81,11 +91,25 @@ func Start(c *cli.Context) error {
 		log.Fatal("[FAIL] Cannot start server: ", err)
 	}
 
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		s := <-sigCh
+		log.Printf("Got signal %v, attempting graceful shutdown", s)
+		grpcServer.GracefulStop()
+		// grpc.Stop() // leads to error while receiving stream response: rpc error: code = Unavailable desc = transport is closing
+		wg.Done()
+	}()
+
 	log.Printf("[STARTED] gRPC Server %s", address)
 	err = grpcServer.Serve(listener)
 	if err != nil {
 		log.Fatal("[FAIL] Cannot start server: ", err)
 	}
 
+	wg.Wait()
+	log.Println("[SHUTDOWN] Clean shutdown")
 	return nil
 }
